@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>InstaLeap API</title>
+    <link rel="icon" type="image/png" href="https://instaleap.tech/favicon.png" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      .menu-content {
+        background: black !important;
+      }
+      .menu-content .scrollbar-container, .search-input, .http-verb {
+        filter: invert(100%);
+      }
+      .http-verb {
+        color: black !important;
+        font-weight: bold !important;
+      }
+      .operation-type {
+        color: black !important;
+        font-size: 10px !important;
+        line-height: 16px !important;
+        height: 20px !important;
+        padding: 2px 4px !important;
+        width: auto !important;
+      }
+    </style>
+  </head>
+  <body>
+    <redoc spec-url='./swagger.json'></redoc>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"> </script>
+  </body>
+</html>

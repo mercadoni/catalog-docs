@@ -1,0 +1,226 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0",
+    "title": "InstaLeap API",
+    "description": "In this guide, you will find all the information related to the endpoints provided by the *InstaLeap API*. \n\n# Environments \n The InstaLeap API provides 2 environments useful for different stages of the integration process. Your team will have access to: \n### Staging:\n - Useful for development and testing \n\n### Production:\n - Live operation \n\n\n# Connection details \n To integrate correctly with our APIs, take this into account: \n 1. We will provide tokens for each environment. \n 2. A CORS policy would be set for staging & production environments. Sandbox allows all origins. \n 3. Content type is always `application/json`. \n 4. We provide standard HTTP error management. \n 5. Tokens should be set in header with the key `x-api-token`.",
+    "x-logo": {
+      "url": "https://instaleap.tech/logo.png",
+      "backgroundColor": "#000000",
+      "altText": "InstaLeap logo"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://staging-catalog.instaleap.io",
+      "description": "Staging server"
+    },
+    {
+      "url": "https://catalog.instaleap.io",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+     "/catalogue/bulkCreateUpdate": {
+      "post": {
+        "summary": "Create or update products by store",
+        "description": "Allow create or update a large batch of products by store. There are two modes of operation, upsert enabled or only update. If the upsertMode param is not present or comed with FALSE, the service only will require the storeReference, and the skus, of the products to update, and additionally the fields which we want to update. Keep in mind to enable product creation in the same endpoint is needed to set upsertMode as TRUE and it's important to include the whole Product payload. ",
+        "tags": [
+          "Catalog"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CatalogUpdateBody"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsUpdated": {
+                  "type": "number", 
+                  "description":"Number of products updated",
+                  "default": "0"
+                },
+                "productsCreated": {
+                  "type": "number", 
+                  "description":"Number of products created",
+                  "default": "0"
+                },
+                "productsErrors": {
+                  "type": "array", 
+                  "items":{
+                    "message":"Error description",
+                    "location":"Which row have the issue"
+                  },
+                  "default": "[]"
+                }
+              }
+            }
+          },
+          "206":{
+            "description": "Response with errors. When some product update or creation fails that is responded.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productsUpdated": {
+                  "type": "number", 
+                  "description":"Number of products updated",
+                  "default": "0"
+                },
+                "productsCreated": {
+                  "type": "number", 
+                  "description":"Number of products created",
+                  "default": "0"
+                },
+                "prouctsErrors": {
+                  "type": "array", 
+                  "items":{
+                    "message":"Error description",
+                    "location":"Which row have the issue"
+                  }
+                }
+              }
+            }
+          },
+          "401":{
+            "description": "Missing attributes or malformed payload",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {"type": "string", "default": "Missing attributes"}
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "x-api-key": {
+      "type": "apiKey",
+      "name": "x-api-key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Empty": {
+      "type": "object"
+    },
+    "CatalogUpdateBody": {
+      "type": "object",
+      "properties": {
+        "storeReference": {
+          "type": "string",
+          "description": "OrderId or equivalent reference created in your backend for the job to be created."
+        },
+        "upsertMode": {
+          "type": "boolean",
+          "description": "FALSE: Only update certain fields using the sku and storeReference.\n TRUE: enable creation of new products and update the existent sku products in the same request."
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }  
+        }
+      },
+      "required": [
+        "storeReference",
+        "upsertMode"
+      ]
+    },
+    "Product": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Display name of the product."
+        },
+        "photoUrls": {
+          "type": "array",
+          "items":{
+            "type": "string"
+          },
+          "description": "DEFAULT [' ']. Valid url of the products"
+        },
+        "sku": {
+          "type": "string",
+          "description": "Unique identifier of products by store."
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measure of the product."
+        },
+        "showSubUnit": {
+          "type": "boolean",
+          "description": "DEFAULT 'FALSE'. Indicates if the sub unit will be showed in the showcase for this product."
+        },
+        "price": {
+          "type": "number",
+          "description": "DEFAULT 0. Regular price to show for a product."
+        },
+        "clickMultiplier": {
+          "type": "number",
+          "description": "DEFAULT 1. Factor to add per product."
+        },
+        "stock": {
+          "type": "number",
+          "description": "DEFAULT 0. Quantity of products in stock. Only products with stock greater than 3 will be showed in the showcase. This stock is not used to discount product existences in realtime. "
+        },
+        "specialPrice": {
+          "type": "number",
+          "description": "DEFAULT 0. Price in promotions or special offers. If there are a value different to 0 that will be have into account."
+        },
+        "nutritionalDetails": {
+          "type": "string",
+          "description": "DEFAULT ' '. Url with the nutritional details or more details about the product."
+        },
+        "subQty": {
+          "type": "number",
+          "description": "DEFAULT 0. Sub unit quantity."
+        },
+        "subUnit": {
+          "type": "string",
+          "description": "DEFAULT ' '. Sun unit of measure equivalent for the product."
+        },
+        "maxQty": {
+          "type": "number",
+          "description": "DEFAULT 0. Max quantity permitted to be added for regular price."
+        },
+        "specialMaxQty": {
+          "type": "number",
+          "description": "DEFAULT 0. Max quantity permitted to be added for products with special price."
+        },
+        "ean": {
+          "type": "string",
+          "description": "DEFAULT ' '. EAN identifier for some products "
+        },
+        "boost": {
+          "type": "number",
+          "description": "DEFAULT 0. Product boost used to order in the show case. "
+        }
+      },
+      "required": [
+        "sku"
+      ]
+    }
+  }
+}
