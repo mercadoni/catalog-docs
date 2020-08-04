@@ -17,11 +17,11 @@
     },
     {
       "url": "https://catalog.instaleap.io",
-      "description": "Production server"
+      "description": "(Not published Yet) Production server"
     }
   ],
   "paths": {
-     "/catalogue/bulkCreateUpdate": {
+     "/api/products/bulkCreateUpdate": {
       "post": {
         "summary": "Create or update products by store",
         "description": "Allow create or update a large batch of products by store. There are two modes of operation, upsert enabled or only update. If the upsertMode param is not present or comed with FALSE, the service only will require the storeReference, and the skus, of the products to update, and additionally the fields which we want to update. Keep in mind to enable product creation in the same endpoint is needed to set upsertMode as TRUE and it's important to include the whole Product payload. ",
